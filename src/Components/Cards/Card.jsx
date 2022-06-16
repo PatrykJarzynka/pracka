@@ -6,6 +6,7 @@ import { Level } from "./Level/Level";
 import { Form } from "./Form/Form";
 import { Activities } from "./Activities/Activities";
 import CompleteTask from "./CompleteTask/CompleteTask";
+import { Animated } from "react-animated-css";
 
 const Card = () => {
   const [questName, setQuestName] = useState("");
@@ -18,6 +19,7 @@ const Card = () => {
   const [updateMode, setUpdateMode] = useState(false);
   const [isDeleted, setIsDeleted] = useState(false);
   const [isCompleted, setCompleted] = useState(false);
+  const [visable, setVisable] = useState(true);
 
   useEffect(() => {
     if (isDeleted) {
@@ -56,45 +58,58 @@ const Card = () => {
   };
 
   const completeQuest = () => {
-    setCompleted(true)
-  }
+    setVisable(false);
+    const timeout = setInterval(() => {
+      setCompleted(true);
+    }, 1000);
+  };
 
   return (
     <div>
       {!isCompleted && (
-        <div className={styles.card}>
-          {levelToggle ? <ModalLevel onClick={handlerChangeLevel} /> : null}
+        <Animated
+          animationIn="fadeIn"
+          animationOut="fadeOut"
+          isVisible={visable}
+        >
+          <div className={styles.card}>
+            {levelToggle ? <ModalLevel onClick={handlerChangeLevel} /> : null}
 
-          <Level
-            level={level}
-            onClick={handlerLevelToggle}
-            endQuest={completeQuest}
-          />
+            <Level
+              level={level}
+              onClick={handlerLevelToggle}
+              endQuest={completeQuest}
+            />
 
-          <Form
-            calendar={calendar}
-            questName={questName}
-            onChange={handlerInput}
-            changeCalendar={handlerChangeCalendar}
-          />
+            <Form
+              calendar={calendar}
+              questName={questName}
+              onChange={handlerInput}
+              changeCalendar={handlerChangeCalendar}
+            />
 
-          {activityToggle ? (
-            <ModalActivity onClick={handlerChangeActivity} />
-          ) : null}
+            {activityToggle ? (
+              <ModalActivity onClick={handlerChangeActivity} />
+            ) : null}
 
-          <Activities
-            activity={activity}
-            onClick={handlerActivityToggle}
-            onCreate={handlerCreate}
-            onDelete={handlerDelete}
-          />
-        </div>
+            <Activities
+              activity={activity}
+              onClick={handlerActivityToggle}
+              onCreate={handlerCreate}
+              onDelete={handlerDelete}
+            />
+          </div>
+        </Animated>
       )}
-      {isCompleted && <div className={styles.cardComplete}>
-        <CompleteTask></CompleteTask>
-      </div>}
+      {isCompleted && (
+        <Animated>
+          <div className={styles.cardComplete}>
+            <CompleteTask></CompleteTask>
+          </div>
+        </Animated>
+      )}
     </div>
-  ); 
+  );
 };
 
 export default Card;
